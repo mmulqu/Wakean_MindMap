@@ -46,8 +46,9 @@ function renderMarkmap(markdown) {
 
 // Initialize Markmap when the page loads
 document.addEventListener('DOMContentLoaded', () => {
-    const { markmap } = window;
-    const { Markmap, loadCSS, loadJS } = markmap;
+    // Get Markmap from window object
+    const { Markmap, loadCSS, loadJS } = window.markmap;
+    const { transform } = window.markmap;
     
     // Initialize markmap links
     document.querySelectorAll('.markmap-link').forEach(link => {
@@ -61,11 +62,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 // Fetch the markdown content
                 const response = await fetch(`markmaps/${markmapFile}`);
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
                 const markdown = await response.text();
                 
                 // Transform markdown to markmap data
-                const { root } = markmap.transform(markdown);
+                const { root } = transform(markdown);
                 
                 // Clear existing content
                 const svg = document.getElementById('markmap');
