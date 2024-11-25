@@ -23,33 +23,19 @@
   </nav>
 
   <main>
-    <section id="home">
-      <h1>Finnegans Wake - Interactive Markmap</h1>
-      <p>Select a passage to explore its intricate web of references:</p>
-      <p>
-        <a href="#" class="markmap-link" data-markmap="swerve-of-shore.md">sWerve of Shore</a> to bend of bay, brings us by a commodius vicus of recirculation back to
-        Howth Castle and Environs.
-      </p>
-    </section>
+    <div class="text-panel">
+      <section id="home">
+        <h1>Finnegans Wake - Interactive Markmap</h1>
+        <p>Select a passage to explore its intricate web of references:</p>
+        <div id="text-content">
+          <!-- Your text content will be loaded here -->
+        </div>
+      </section>
+    </div>
 
-    <section id="try-it-out">
-      <h2>Try It Out</h2>
-      <textarea id="markdown-input" placeholder="Enter your markdown here..."></textarea>
-      <button id="render-btn">Render Markmap</button>
+    <div class="markmap-panel">
       <svg id="markmap"></svg>
-    </section>
-
-    <section id="docs">
-      <h2>Documentation</h2>
-      <p>Explore how to use Markmap with Finnegans Wake.</p>
-      <!-- Additional documentation content -->
-    </section>
-
-    <section id="donate">
-      <h2>Donate</h2>
-      <p>If you enjoy this project, consider supporting it.</p>
-      <!-- Donation links or information -->
-    </section>
+    </div>
   </main>
 
   <script src="scripts/main.js"></script>

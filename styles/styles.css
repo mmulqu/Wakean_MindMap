@@ -33,7 +33,21 @@ body {
   }
   
   main {
+    display: grid;
+    grid-template-columns: 40% 60%;
+    gap: 20px;
     padding: 20px;
+    height: calc(100vh - 50px);
+  }
+  
+  .text-panel {
+    overflow-y: auto;
+    padding: 20px;
+    border-right: 1px solid #ccc;
+  }
+  
+  .markmap-panel {
+    overflow: hidden;
   }
   
   #markdown-input {
@@ -48,7 +62,6 @@ body {
   
   #markmap {
     width: 100%;
-    height: 600px;
+    height: 100%;
     border: 1px solid #ccc;
-    margin-top: 20px;
   }
