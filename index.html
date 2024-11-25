@@ -1,0 +1,53 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Finnegans Wake - Interactive Markmap</title>
+  <link rel="stylesheet" href="styles/styles.css">
+  <!-- Include Markmap libraries -->
+  <script src="https://unpkg.com/d3@7"></script>
+  <script src="https://unpkg.com/markmap-lib/dist/markmap-lib.min.js"></script>
+  <script src="https://unpkg.com/markmap-view/dist/view.min.js"></script>
+</head>
+<body>
+  <nav>
+    <ul>
+      <li><a href="#home">Home</a></li>
+      <li><a href="#try-it-out">Try It Out</a></li>
+      <li><a href="#docs">Docs</a></li>
+      <li><a href="#api">API</a></li>
+      <li><a href="https://github.com/your-repo" target="_blank">GitHub</a></li>
+      <li><a href="#donate">Donate</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <section id="home">
+      <h1>Finnegans Wake - Interactive Markmap</h1>
+      <p>Select a passage to explore its intricate web of references.</p>
+    </section>
+
+    <section id="try-it-out">
+      <h2>Try It Out</h2>
+      <textarea id="markdown-input" placeholder="Enter your markdown here..."></textarea>
+      <button id="render-btn">Render Markmap</button>
+      <svg id="markmap"></svg>
+    </section>
+
+    <section id="docs">
+      <h2>Documentation</h2>
+      <p>Explore how to use Markmap with Finnegans Wake.</p>
+      <!-- Additional documentation content -->
+    </section>
+
+    <section id="donate">
+      <h2>Donate</h2>
+      <p>If you enjoy this project, consider supporting it.</p>
+      <!-- Donation links or information -->
+    </section>
+  </main>
+
+  <script src="scripts/main.js"></script>
+</body>
+</html>
