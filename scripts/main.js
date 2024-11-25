@@ -41,7 +41,16 @@ function renderMarkmap(markdown) {
 
 // Add this function to load text content
 function loadTextContent() {
-  fetch('content/chapter1.txt')
+  // Add console.log to debug
+  console.log('Loading text content...');
+  
+  // Use the full GitHub Pages URL path
+  const repoName = 'Wakean_MindMap'; // Change this to match your repo name
+  const contentPath = `/${repoName}/content/chapter1.txt`;
+  
+  console.log('Fetching from:', contentPath);
+  
+  fetch(contentPath)
     .then(response => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -49,15 +58,19 @@ function loadTextContent() {
       return response.text();
     })
     .then(text => {
+      console.log('Text loaded:', text.substring(0, 50) + '...'); // Log first 50 chars
       const textContent = document.getElementById('text-content');
-      // Split text into paragraphs and add markmap links
       const formattedText = formatTextWithLinks(text);
       textContent.innerHTML = formattedText;
       
-      // Reinitialize markmap links
       initializeMarkmapLinks();
     })
-    .catch(error => console.error('Error loading text:', error));
+    .catch(error => {
+      console.error('Error loading text:', error);
+      // Show error in the text panel
+      const textContent = document.getElementById('text-content');
+      textContent.innerHTML = `<p style="color: red;">Error loading text: ${error.message}</p>`;
+    });
 }
 
 // Call this when the page loads
