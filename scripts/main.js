@@ -1,14 +1,24 @@
 // scripts/main.js
 
 document.addEventListener('DOMContentLoaded', async () => {
+    // Wait for markmap to be available
+    const waitForMarkmap = () => {
+        return new Promise((resolve) => {
+            const check = () => {
+                if (window.markmap) {
+                    resolve(window.markmap);
+                } else {
+                    setTimeout(check, 100);
+                }
+            };
+            check();
+        });
+    };
+
     // Initialize Markmap
-    const { markmap } = window;
-    if (!markmap) {
-        console.error('Markmap library not loaded');
-        return;
-    }
-    const { Markmap } = markmap;
-    const { transform } = markmap;
+    const markmap = await waitForMarkmap();
+    const { Markmap, Transformer } = markmap;
+    const transformer = new Transformer();
 
     // Load index data
     let indexData;
@@ -46,28 +56,36 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Handle markmap rendering
     async function renderMarkmap(markmapFile) {
+        const loadingEl = document.getElementById('loading');
+        const svgEl = document.getElementById('markmap');
+        
         try {
-            document.getElementById('loading').style.display = 'block';
+            loadingEl.style.display = 'block';
             
+            // Fetch and transform markdown
             const response = await fetch(`content/markmaps/${markmapFile}`);
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const markdown = await response.text();
             
-            const { root } = transform(markdown);
-            const svg = document.getElementById('markmap');
-            svg.innerHTML = '';
+            // Clear existing content
+            svgEl.innerHTML = '';
             
-            Markmap.create(svg, {
+            // Transform markdown and create markmap
+            const { root } = transformer.transform(markdown);
+            const mm = Markmap.create(svgEl, {
                 autoFit: true,
                 duration: 500,
+                maxWidth: 800,
             }, root);
+            
+            // Force layout recalculation
+            setTimeout(() => mm.fit(), 100);
             
         } catch (error) {
             console.error('Error:', error);
-            const svg = document.getElementById('markmap');
-            svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="red">Error: ${error.message}</text>`;
+            svgEl.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="red">Error: ${error.message}</text>`;
         } finally {
-            document.getElementById('loading').style.display = 'none';
+            loadingEl.style.display = 'none';
         }
     }
 
@@ -81,6 +99,15 @@ document.addEventListener('DOMContentLoaded', async () => {
             e.preventDefault();
             const markmapFile = e.target.getAttribute('data-markmap');
             renderMarkmap(markmapFile);
+        }
+    });
+
+    // Handle window resize
+    window.addEventListener('resize', () => {
+        const svgEl = document.getElementById('markmap');
+        const mm = Markmap.find(svgEl);
+        if (mm) {
+            mm.fit();
         }
     });
 

@@ -1,27 +1,36 @@
 {
-    "chapters": [
-      {
-        "id": 1,
-        "keywords": {
-          "swerve of shore": {
-            "file": "ch1/swerve-of-shore.md",
-            "occurrences": [
-              {
-                "page": 3,
-                "context": "from swerve of shore to bend"
-              }
-            ]
-          },
-          "bend of bay": {
-            "file": "ch1/bend-of-bay.md",
-            "occurrences": [
-              {
-                "page": 3,
-                "context": "swerve of shore to bend of bay"
-              }
-            ]
-          }
+  "chapters": [
+    {
+      "id": 1,
+      "title": "Chapter 1",
+      "fileName": "chapter1.txt",
+      "keywords": {
+        "swerve of shore": {
+          "markmapFile": "swerve-of-shore.md",
+          "occurrences": [
+            {
+              "offset": 45,
+              "context": "... from swerve of shore to bend ..."
+            }
+          ]
+        },
+        "bend of bay": {
+          "markmapFile": "bend-of-bay.md",
+          "occurrences": [
+            {
+              "offset": 58,
+              "context": "... swerve of shore to bend of bay, brings ..."
+            }
+          ]
         }
       }
-    ]
+    }
+  ],
+  "markmaps": {
+    "swerve-of-shore": {
+      "title": "Swerve of Shore",
+      "description": "Movement and transition symbolism",
+      "relatedKeywords": ["bend of bay", "Howth Castle"]
+    }
   }
+}
