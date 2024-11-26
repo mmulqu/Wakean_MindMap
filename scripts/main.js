@@ -1,13 +1,11 @@
 // scripts/main.js
 
 window.addEventListener('load', async () => {
-    // Verify libraries are loaded
     if (!window.markmap) {
         console.error('Markmap library not loaded');
         return;
     }
 
-    // Get required components from markmap
     const { Transformer } = window.markmap;
     const { Markmap } = window.markmap;
     const transformer = new Transformer();
@@ -30,11 +28,6 @@ window.addEventListener('load', async () => {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             let text = await response.text();
             
-            // Normalize the text: replace line breaks with spaces
-            text = text.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ');
-            
-            console.log('Normalized text:', text.substring(0, 200));
-
             // Get chapter data from index
             const chapterData = indexData.chapters.find(ch => ch.id === parseInt(chapterId));
             if (!chapterData) throw new Error(`Chapter ${chapterId} not found in index`);
@@ -43,19 +36,16 @@ window.addEventListener('load', async () => {
             let processedText = text;
             for (const [keyword, data] of Object.entries(chapterData.keywords)) {
                 console.log(`Processing keyword: "${keyword}"`);
-                // Create a regex that matches the keyword even with line breaks and multiple spaces
+                // Create a regex that matches the keyword even with line breaks
                 const keywordRegex = new RegExp(
                     keyword.replace(/\s+/g, '\\s+'),
                     'gi'
                 );
-                const replacement = `<a href="#" class="markmap-link" data-markmap="${data.markmapFile}">${keyword}</a>`;
+                // Add chapter folder to the markmap path
+                const markmapPath = `ch${chapterId}/${data.markmapFile}`;
+                const replacement = `<a href="#" class="markmap-link" data-markmap="${markmapPath}">${keyword}</a>`;
                 processedText = processedText.replace(keywordRegex, replacement);
             }
-
-            // Restore some formatting
-            processedText = processedText
-                .split(/\n\s{4}/)  // Split on indented lines
-                .join('\n    ');   // Restore indentation
 
             // Update the content
             document.getElementById('text-content').innerHTML = processedText;
@@ -78,12 +68,14 @@ window.addEventListener('load', async () => {
     async function renderMarkmap(markmapFile) {
         try {
             document.getElementById('loading').style.display = 'block';
+            console.log('Loading markmap from:', `content/markmaps/${markmapFile}`);
 
             const response = await fetch(`content/markmaps/${markmapFile}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const markdown = await response.text();
+            console.log('Markdown content loaded successfully');
 
             const { root } = transformer.transform(markdown);
             
