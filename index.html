@@ -7,51 +7,27 @@
     <link rel="stylesheet" href="styles/styles.css">
     <!-- Load D3 first -->
     <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-    <!-- Load Markmap libraries in correct order -->
+    <!-- Load Markmap libraries -->
     <script src="https://cdn.jsdelivr.net/npm/markmap-lib/dist/browser/index.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/markmap-view/dist/browser/index.js"></script>
-    </head>
+</head>
 <body>
-  <nav>
-    <ul>
-      <li><a href="#home">Home</a></li>
-      <li><a href="#try-it-out">Try It Out</a></li>
-      <li><a href="#docs">Docs</a></li>
-      <li><a href="#api">API</a></li>
-      <li><a href="https://github.com/mmulqu/Wakean_MindMap/" target="_blank">GitHub</a></li>
-      <li><a href="#donate">Donate</a></li>
-    </ul>
-  </nav>
-
-  <main>
-    <div class="text-panel">
-      <section id="home">
-        <h1>Finnegans Wake - Interactive Markmap</h1>
-        <p>Select a passage to explore its intricate web of references:</p>
-        <div id="text-content">
-          <p>
-            riverrun, past Eve and Adam's, from 
-            <a href="#" class="markmap-link" data-markmap="swerve-of-shore.md">swerve of shore</a> 
-            to 
-            <a href="#" class="markmap-link" data-markmap="bend-of-bay.md">bend of bay</a>, 
-            brings us by a commodius vicus of recirculation back to 
-            <a href="#" class="markmap-link" data-markmap="howth-castle.md">Howth Castle</a> 
-            and Environs.
-          </p>
-          <p>
-            Sir Tristram, violer d'amores, fr'over the short sea, had passen-core rearrived from North Armorica on this side the scraggy isthmus of Europe Minor to wielderfight his penisolate war: nor had topsawyer's rocks by the stream Oconee exaggerated themselse to Laurens County's gorgios while they went doublin their mumper all the time: nor avoice from afire bellowsed mishe mishe to tauftauf thuartpeatrick...
-          </p>
-          <!-- Add rest of text in proper paragraphs -->
+    <main>
+        <div class="text-panel">
+            <div id="chapter-selector">
+                <select id="chapter-select">
+                    <option value="1">Chapter 1</option>
+                </select>
+            </div>
+            <div id="text-content"></div>
         </div>
-      </section>
-    </div>
 
-    <div class="markmap-panel">
-      <div id="loading" style="display: none;">Loading...</div>
-      <svg id="markmap" style="width: 100%; height: 100%;"></svg>
-    </div>
-  </main>
+        <div class="markmap-panel">
+            <div id="loading" style="display: none;">Loading...</div>
+            <svg id="markmap"></svg>
+        </div>
+    </main>
 
-  <script src="scripts/main.js"></script>
+    <script src="scripts/main.js"></script>
 </body>
 </html>

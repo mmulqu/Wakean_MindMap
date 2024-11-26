@@ -1,0 +1,27 @@
+{
+    "chapters": [
+      {
+        "id": 1,
+        "keywords": {
+          "swerve of shore": {
+            "file": "ch1/swerve-of-shore.md",
+            "occurrences": [
+              {
+                "page": 3,
+                "context": "from swerve of shore to bend"
+              }
+            ]
+          },
+          "bend of bay": {
+            "file": "ch1/bend-of-bay.md",
+            "occurrences": [
+              {
+                "page": 3,
+                "context": "swerve of shore to bend of bay"
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
