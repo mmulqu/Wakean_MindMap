@@ -1,6 +1,6 @@
 // scripts/main.js
 
-window.addEventListener('load', () => {
+window.addEventListener('load', async () => {
     // Verify libraries are loaded
     if (!window.markmap) {
         console.error('Markmap library not loaded');
@@ -12,13 +12,40 @@ window.addEventListener('load', () => {
     const { Markmap } = window.markmap;
     const transformer = new Transformer();
 
+    // Load index data first
+    let indexData;
+    try {
+        const response = await fetch('data/index.json');
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+        indexData = await response.json();
+    } catch (error) {
+        console.error('Error loading index:', error);
+        return;
+    }
+
     async function loadChapter(chapterId) {
         try {
             const response = await fetch(`content/chapters/chapter${chapterId}.txt`);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const text = await response.text();
-            document.getElementById('text-content').innerHTML = text;
-            
-            // Add click handlers to any markmap links
+
+            // Get chapter data from index
+            const chapterData = indexData.chapters.find(ch => ch.id === parseInt(chapterId));
+            if (!chapterData) throw new Error(`Chapter ${chapterId} not found in index`);
+
+            // Process text with keywords
+            let processedText = text;
+            for (const [keyword, data] of Object.entries(chapterData.keywords)) {
+                const regex = new RegExp(keyword, 'gi');
+                processedText = processedText.replace(regex, 
+                    `<a href="#" class="markmap-link" data-markmap="${data.markmapFile}">${keyword}</a>`
+                );
+            }
+
+            // Update the content
+            document.getElementById('text-content').innerHTML = processedText;
+
+            // Add click handlers to markmap links
             document.querySelectorAll('.markmap-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
@@ -27,6 +54,7 @@ window.addEventListener('load', () => {
             });
         } catch (error) {
             console.error('Error loading chapter:', error);
+            document.getElementById('text-content').innerHTML = `Error: ${error.message}`;
         }
     }
 
