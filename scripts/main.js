@@ -10,7 +10,6 @@ window.addEventListener('load', async () => {
     const { Markmap } = window.markmap;
     const transformer = new Transformer();
 
-    // Load index data
     let indexData;
     try {
         const response = await fetch('data/index.json');
@@ -28,34 +27,34 @@ window.addEventListener('load', async () => {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             let text = await response.text();
             
-            // Get chapter data from index
             const chapterData = indexData.chapters.find(ch => ch.id === parseInt(chapterId));
             if (!chapterData) throw new Error(`Chapter ${chapterId} not found in index`);
 
-            // Process text with keywords
             let processedText = text;
             for (const [keyword, data] of Object.entries(chapterData.keywords)) {
-                console.log(`Processing keyword: "${keyword}"`);
-                // Create a regex that matches the keyword even with line breaks
                 const keywordRegex = new RegExp(
                     keyword.replace(/\s+/g, '\\s+'),
                     'gi'
                 );
-                // Add chapter folder to the markmap path
+                
+                // Explicitly include the chapter folder in the data-markmap attribute
                 const markmapPath = `ch${chapterId}/${data.markmapFile}`;
+                console.log('Creating link with path:', markmapPath);
+                
                 const replacement = `<a href="#" class="markmap-link" data-markmap="${markmapPath}">${keyword}</a>`;
                 processedText = processedText.replace(keywordRegex, replacement);
             }
 
-            // Update the content
             document.getElementById('text-content').innerHTML = processedText;
 
-            // Add click handlers to markmap links
+            // Log all created links for debugging
             document.querySelectorAll('.markmap-link').forEach(link => {
+                console.log('Created link with data-markmap:', link.getAttribute('data-markmap'));
+                
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const mapFile = e.target.getAttribute('data-markmap');
-                    console.log('Markmap link clicked:', mapFile);
+                    console.log('Markmap link clicked, loading:', mapFile);
                     renderMarkmap(mapFile);
                 });
             });
@@ -68,14 +67,17 @@ window.addEventListener('load', async () => {
     async function renderMarkmap(markmapFile) {
         try {
             document.getElementById('loading').style.display = 'block';
-            console.log('Loading markmap from:', `content/markmaps/${markmapFile}`);
+            
+            // Ensure we're using the chapter-specific path
+            const fullPath = `content/markmaps/${markmapFile}`;
+            console.log('Attempting to load markmap from:', fullPath);
 
-            const response = await fetch(`content/markmaps/${markmapFile}`);
+            const response = await fetch(fullPath);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const markdown = await response.text();
-            console.log('Markdown content loaded successfully');
+            console.log('Successfully loaded markdown content');
 
             const { root } = transformer.transform(markdown);
             
@@ -88,7 +90,7 @@ window.addEventListener('load', async () => {
             }, root);
 
         } catch (error) {
-            console.error('Error:', error);
+            console.error('Error loading markmap:', error);
             const svg = document.getElementById('markmap');
             svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="red">Error: ${error.message}</text>`;
         } finally {
@@ -96,11 +98,9 @@ window.addEventListener('load', async () => {
         }
     }
 
-    // Add event listener for chapter selection
     document.getElementById('chapter-select').addEventListener('change', (e) => {
         loadChapter(e.target.value);
     });
 
-    // Initial load of chapter 1
     loadChapter(1);
 });

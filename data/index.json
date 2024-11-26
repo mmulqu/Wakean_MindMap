@@ -6,7 +6,7 @@
       "fileName": "chapter1.txt",
       "keywords": {
         "swerve of shore": {
-          "markmapFile": "swerve-of-shore.md",
+          "markmapFile": "ch1/swerve-of-shore.md",
           "occurrences": [
             {
               "offset": 45,
@@ -15,7 +15,7 @@
           ]
         },
         "bend of bay": {
-          "markmapFile": "bend-of-bay.md",
+          "markmapFile": "ch1/bend-of-bay.md",
           "occurrences": [
             {
               "offset": 58,
