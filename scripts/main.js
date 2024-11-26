@@ -29,24 +29,37 @@ window.addEventListener('load', async () => {
             
             const chapterData = indexData.chapters.find(ch => ch.id === parseInt(chapterId));
             if (!chapterData) throw new Error(`Chapter ${chapterId} not found in index`);
-
-            let processedText = text;
+    
+            // Format the text first
+            const formatText = (text) => {
+                return text.split('\n').map((line, index) => {
+                    const indentMatch = line.match(/^(\s+)/);
+                    const indent = indentMatch ? indentMatch[0].length * 0.5 : 0;
+                    
+                    return `<div style="text-indent: ${indent}em; margin-bottom: 0.5em; line-height: 1.5">
+                        ${line.trim()}
+                    </div>`;
+                }).join('');
+            };
+    
+            let processedText = formatText(text);
+    
+            // Then process the keywords
             for (const [keyword, data] of Object.entries(chapterData.keywords)) {
                 const keywordRegex = new RegExp(
                     keyword.replace(/\s+/g, '\\s+'),
                     'gi'
                 );
                 
-                // REMOVED chapter path from here - just use the filename
                 const markmapPath = data.markmapFile;
                 console.log('Creating link with path:', markmapPath);
                 
                 const replacement = `<a href="#" class="markmap-link" data-markmap="${markmapPath}" data-chapter="${chapterId}">${keyword}</a>`;
                 processedText = processedText.replace(keywordRegex, replacement);
             }
-
+    
             document.getElementById('text-content').innerHTML = processedText;
-
+    
             document.querySelectorAll('.markmap-link').forEach(link => {
                 console.log('Created link with data-markmap:', link.getAttribute('data-markmap'));
                 
