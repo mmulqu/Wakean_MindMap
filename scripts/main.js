@@ -37,11 +37,11 @@ window.addEventListener('load', async () => {
                     'gi'
                 );
                 
-                // CHANGED: Just use the markmapFile directly
-                const markmapPath = `ch${chapterId}/${data.markmapFile}`;
+                // REMOVED chapter path from here - just use the filename
+                const markmapPath = data.markmapFile;
                 console.log('Creating link with path:', markmapPath);
                 
-                const replacement = `<a href="#" class="markmap-link" data-markmap="${markmapPath}">${keyword}</a>`;
+                const replacement = `<a href="#" class="markmap-link" data-markmap="${markmapPath}" data-chapter="${chapterId}">${keyword}</a>`;
                 processedText = processedText.replace(keywordRegex, replacement);
             }
 
@@ -53,8 +53,9 @@ window.addEventListener('load', async () => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
                     const mapFile = e.target.getAttribute('data-markmap');
-                    console.log('Markmap link clicked, loading:', mapFile);
-                    renderMarkmap(mapFile);
+                    const chapter = e.target.getAttribute('data-chapter');
+                    console.log('Markmap link clicked, loading:', mapFile, 'for chapter:', chapter);
+                    renderMarkmap(mapFile, chapter);
                 });
             });
         } catch (error) {
@@ -63,12 +64,12 @@ window.addEventListener('load', async () => {
         }
     }
 
-    async function renderMarkmap(markmapFile) {
+    async function renderMarkmap(markmapFile, chapterId) {
         try {
             document.getElementById('loading').style.display = 'block';
             
-            // CHANGED: Just add the base path to the markmap file
-            const fullPath = `content/markmaps/${markmapFile}`;
+            // Add chapter path here only
+            const fullPath = `content/markmaps/ch${chapterId}/${markmapFile}`;
             console.log('Attempting to load markmap from:', fullPath);
 
             const response = await fetch(fullPath);
