@@ -37,7 +37,7 @@ window.addEventListener('load', async () => {
                     'gi'
                 );
                 
-                // Explicitly include the chapter folder in the data-markmap attribute
+                // CHANGED: Just use the markmapFile directly
                 const markmapPath = `ch${chapterId}/${data.markmapFile}`;
                 console.log('Creating link with path:', markmapPath);
                 
@@ -47,7 +47,6 @@ window.addEventListener('load', async () => {
 
             document.getElementById('text-content').innerHTML = processedText;
 
-            // Log all created links for debugging
             document.querySelectorAll('.markmap-link').forEach(link => {
                 console.log('Created link with data-markmap:', link.getAttribute('data-markmap'));
                 
@@ -68,7 +67,7 @@ window.addEventListener('load', async () => {
         try {
             document.getElementById('loading').style.display = 'block';
             
-            // Ensure we're using the chapter-specific path
+            // CHANGED: Just add the base path to the markmap file
             const fullPath = `content/markmaps/${markmapFile}`;
             console.log('Attempting to load markmap from:', fullPath);
 
