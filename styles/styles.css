@@ -3,16 +3,57 @@ body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 nav {
   background-color: #333;
-  padding: 1rem;
+  padding: 0;
 }
 
-nav select {
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+nav li {
+  margin: 0;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  padding: 1rem 1.5rem;
+  display: block;
+  transition: background-color 0.2s;
+}
+
+nav a:hover {
+  background-color: #444;
+}
+
+.chapter-select {
+  margin-left: auto;  /* Push to the right */
+  padding: 0.5rem 1.5rem;
+}
+
+#chapter-select {
   padding: 0.5rem;
   font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  background-color: #444;
+  color: white;
+  cursor: pointer;
+}
+
+#chapter-select:hover {
+  background-color: #555;
 }
 
 main {
@@ -20,7 +61,7 @@ main {
   grid-template-columns: 40% 60%;
   gap: 20px;
   padding: 20px;
-  height: calc(100vh - 50px);
+  flex: 1;
 }
 
 .text-panel {
@@ -30,8 +71,8 @@ main {
 }
 
 .markmap-panel {
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
 }
 
 #loading {
@@ -39,8 +80,10 @@ main {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 1.2em;
-  color: #666;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 1rem;
+  border-radius: 4px;
+  z-index: 1000;
 }
 
 #markmap {
@@ -56,4 +99,10 @@ main {
 
 .markmap-link:hover {
   text-decoration: underline;
+}
+
+h1 {
+  margin-top: 0;
+  color: #333;
+  font-size: 2rem;
 }
