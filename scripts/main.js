@@ -12,12 +12,13 @@ window.addEventListener('load', async () => {
     const { Markmap } = window.markmap;
     const transformer = new Transformer();
 
-    // Load index data first
+    // Load index data
     let indexData;
     try {
         const response = await fetch('data/index.json');
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         indexData = await response.json();
+        console.log('Successfully loaded index data:', indexData);
     } catch (error) {
         console.error('Error loading index:', error);
         return;
@@ -27,7 +28,12 @@ window.addEventListener('load', async () => {
         try {
             const response = await fetch(`content/chapters/chapter${chapterId}.txt`);
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-            const text = await response.text();
+            let text = await response.text();
+            
+            // Normalize the text: replace line breaks with spaces
+            text = text.replace(/\r?\n/g, ' ').replace(/\s+/g, ' ');
+            
+            console.log('Normalized text:', text.substring(0, 200));
 
             // Get chapter data from index
             const chapterData = indexData.chapters.find(ch => ch.id === parseInt(chapterId));
@@ -36,11 +42,20 @@ window.addEventListener('load', async () => {
             // Process text with keywords
             let processedText = text;
             for (const [keyword, data] of Object.entries(chapterData.keywords)) {
-                const regex = new RegExp(keyword, 'gi');
-                processedText = processedText.replace(regex, 
-                    `<a href="#" class="markmap-link" data-markmap="${data.markmapFile}">${keyword}</a>`
+                console.log(`Processing keyword: "${keyword}"`);
+                // Create a regex that matches the keyword even with line breaks and multiple spaces
+                const keywordRegex = new RegExp(
+                    keyword.replace(/\s+/g, '\\s+'),
+                    'gi'
                 );
+                const replacement = `<a href="#" class="markmap-link" data-markmap="${data.markmapFile}">${keyword}</a>`;
+                processedText = processedText.replace(keywordRegex, replacement);
             }
+
+            // Restore some formatting
+            processedText = processedText
+                .split(/\n\s{4}/)  // Split on indented lines
+                .join('\n    ');   // Restore indentation
 
             // Update the content
             document.getElementById('text-content').innerHTML = processedText;
@@ -49,7 +64,9 @@ window.addEventListener('load', async () => {
             document.querySelectorAll('.markmap-link').forEach(link => {
                 link.addEventListener('click', (e) => {
                     e.preventDefault();
-                    renderMarkmap(e.target.getAttribute('data-markmap'));
+                    const mapFile = e.target.getAttribute('data-markmap');
+                    console.log('Markmap link clicked:', mapFile);
+                    renderMarkmap(mapFile);
                 });
             });
         } catch (error) {
@@ -60,20 +77,16 @@ window.addEventListener('load', async () => {
 
     async function renderMarkmap(markmapFile) {
         try {
-            // Show loading
             document.getElementById('loading').style.display = 'block';
 
-            // 1. Fetch markdown content
             const response = await fetch(`content/markmaps/${markmapFile}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
             }
             const markdown = await response.text();
 
-            // 2. Transform markdown to markmap data
             const { root } = transformer.transform(markdown);
-
-            // 3. Clear and render markmap
+            
             const svg = document.getElementById('markmap');
             svg.innerHTML = '';
             
