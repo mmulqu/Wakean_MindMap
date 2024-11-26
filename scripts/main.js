@@ -1,116 +1,73 @@
 // scripts/main.js
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Wait for markmap to be available
-    const waitForMarkmap = () => {
-        return new Promise((resolve) => {
-            const check = () => {
-                if (window.markmap) {
-                    resolve(window.markmap);
-                } else {
-                    setTimeout(check, 100);
-                }
-            };
-            check();
-        });
-    };
-
-    // Initialize Markmap
-    const markmap = await waitForMarkmap();
-    const { Markmap, Transformer } = markmap;
-    const transformer = new Transformer();
-
-    // Load index data
-    let indexData;
-    try {
-        const response = await fetch('data/index.json');
-        indexData = await response.json();
-    } catch (error) {
-        console.error('Error loading index:', error);
+window.addEventListener('load', () => {
+    // Verify libraries are loaded
+    if (!window.markmap) {
+        console.error('Markmap library not loaded');
         return;
     }
 
-    // Function to load chapter content
+    // Get required components from markmap
+    const { Transformer } = window.markmap;
+    const { Markmap } = window.markmap;
+    const transformer = new Transformer();
+
     async function loadChapter(chapterId) {
         try {
             const response = await fetch(`content/chapters/chapter${chapterId}.txt`);
             const text = await response.text();
-            const processedText = processText(text, indexData.chapters[chapterId - 1].keywords);
-            document.getElementById('text-content').innerHTML = processedText;
+            document.getElementById('text-content').innerHTML = text;
+            
+            // Add click handlers to any markmap links
+            document.querySelectorAll('.markmap-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    renderMarkmap(e.target.getAttribute('data-markmap'));
+                });
+            });
         } catch (error) {
             console.error('Error loading chapter:', error);
         }
     }
 
-    // Process text and add links
-    function processText(text, keywords) {
-        let processedText = text;
-        for (const [keyword, data] of Object.entries(keywords)) {
-            const regex = new RegExp(keyword, 'gi');
-            processedText = processedText.replace(regex, 
-                `<a href="#" class="markmap-link" data-markmap="${data.file}">${keyword}</a>`
-            );
-        }
-        return processedText;
-    }
-
-    // Handle markmap rendering
     async function renderMarkmap(markmapFile) {
-        const loadingEl = document.getElementById('loading');
-        const svgEl = document.getElementById('markmap');
-        
         try {
-            loadingEl.style.display = 'block';
-            
-            // Fetch and transform markdown
+            // Show loading
+            document.getElementById('loading').style.display = 'block';
+
+            // 1. Fetch markdown content
             const response = await fetch(`content/markmaps/${markmapFile}`);
-            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
             const markdown = await response.text();
-            
-            // Clear existing content
-            svgEl.innerHTML = '';
-            
-            // Transform markdown and create markmap
+
+            // 2. Transform markdown to markmap data
             const { root } = transformer.transform(markdown);
-            const mm = Markmap.create(svgEl, {
+
+            // 3. Clear and render markmap
+            const svg = document.getElementById('markmap');
+            svg.innerHTML = '';
+            
+            Markmap.create(svg, {
                 autoFit: true,
                 duration: 500,
-                maxWidth: 800,
             }, root);
-            
-            // Force layout recalculation
-            setTimeout(() => mm.fit(), 100);
-            
+
         } catch (error) {
             console.error('Error:', error);
-            svgEl.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="red">Error: ${error.message}</text>`;
+            const svg = document.getElementById('markmap');
+            svg.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="red">Error: ${error.message}</text>`;
         } finally {
-            loadingEl.style.display = 'none';
+            document.getElementById('loading').style.display = 'none';
         }
     }
 
-    // Add event listeners
+    // Add event listener for chapter selection
     document.getElementById('chapter-select').addEventListener('change', (e) => {
         loadChapter(e.target.value);
     });
 
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('markmap-link')) {
-            e.preventDefault();
-            const markmapFile = e.target.getAttribute('data-markmap');
-            renderMarkmap(markmapFile);
-        }
-    });
-
-    // Handle window resize
-    window.addEventListener('resize', () => {
-        const svgEl = document.getElementById('markmap');
-        const mm = Markmap.find(svgEl);
-        if (mm) {
-            mm.fit();
-        }
-    });
-
-    // Load initial chapter
+    // Initial load of chapter 1
     loadChapter(1);
 });

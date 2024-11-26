@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <title>Finnegans Wake - Interactive Markmap</title>
     <link rel="stylesheet" href="styles/styles.css">
-    <!-- Load required libraries in correct order -->
-    <script src="https://cdn.jsdelivr.net/npm/d3@7.8.5/dist/d3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/markmap-view/dist/browser/index.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/markmap-lib/dist/browser/index.min.js"></script>
+    <!-- Load D3 first -->
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <!-- Then load markmap libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/markmap-lib/dist/browser/index.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markmap-view/dist/browser/index.js"></script>
 </head>
 <body>
     <nav>
@@ -16,7 +17,7 @@
             <option value="2">Chapter 2</option>
         </select>
     </nav>
-    
+
     <main>
         <div class="text-panel">
             <section id="home">
@@ -30,11 +31,10 @@
 
         <div class="markmap-panel">
             <div id="loading" style="display: none;">Loading...</div>
-            <svg id="markmap"></svg>
+            <svg id="markmap" style="width: 800px; height: 800px"></svg>
         </div>
     </main>
 
-    <!-- Load your script last -->
     <script src="scripts/main.js"></script>
 </body>
 </html>
